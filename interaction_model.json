@@ -1,0 +1,155 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "fizz buzz",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": [
+                        "what can I say",
+                        "help"
+                    ]
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "RepeatOutputIntent",
+                    "slots": [],
+                    "samples": [
+                        "repeat",
+                        "what did you say",
+                        "can you say that again",
+                        "what"
+                    ]
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "RespondIntent",
+                    "slots": [
+                        {
+                            "name": "number",
+                            "type": "AMAZON.NUMBER",
+                            "samples": [
+                                "four",
+                                "two",
+                                "one"
+                            ],
+                            "multipleValues": {
+                                "enabled": true
+                            }
+                        },
+                        {
+                            "name": "fizz_buzz",
+                            "type": "fizz_or_buzz",
+                            "samples": [
+                                "fizz buzz",
+                                "buzz",
+                                "fizz"
+                            ],
+                            "multipleValues": {
+                                "enabled": true
+                            }
+                        }
+                    ],
+                    "samples": [
+                        "{fizz_buzz} ",
+                        "{number}"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "fizz_or_buzz",
+                    "values": [
+                        {
+                            "id": "2",
+                            "name": {
+                                "value": "fizz buzz"
+                            }
+                        },
+                        {
+                            "id": "1",
+                            "name": {
+                                "value": "buzz"
+                            }
+                        },
+                        {
+                            "id": "0",
+                            "name": {
+                                "value": "fizz"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "RespondIntent",
+                    "delegationStrategy": "SKILL_RESPONSE",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "number",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.373464464311.515155995586"
+                            }
+                        },
+                        {
+                            "name": "fizz_buzz",
+                            "type": "fizz_or_buzz",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1069060078141.1345580538365"
+                            }
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.1069060078141.1345580538365",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "{number}"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "{fizz_buzz}"
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.373464464311.515155995586",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "{number}"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "{fizz_buzz}"
+                    }
+                ]
+            }
+        ]
+    }
+}
