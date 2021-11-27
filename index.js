@@ -2,8 +2,9 @@
 const Alexa = require('ask-sdk-core');
 
 const messages = {
-    LAUNCH: `Welcome to Fizz Buzz. We’ll each take turns counting up from one. However, you must replace numbers divisible by 3 with the word “fizz”,and you must replace numbers divisible by 5 with the word “buzz”. If a number is divisible by both 3 and 5, you should instead say “fizz buzz”. If you get one wrong, you lose. I'll go first... 1.`
-     
+    LAUNCH: `Welcome to Fizz Buzz. We’ll each take turns counting up from one. However, you must replace numbers divisible by 3 with the word “fizz”,and you must replace numbers divisible by 5 with the word “buzz”. If a number is divisible by both 3 and 5, you should instead say “fizz buzz”. If you get one wrong, you lose. I'll go first... 1.`,
+    HELP: `This is Fizz Buzz. We'll take turns counting up from 1. Replace numbers divisible by 3 with the word “fizz”, and you must replace numbers divisible by 5 with the word “buzz”. You can say help, repeat, or exit.`,
+    STOP: `Thanks for playing Fizz Buzz. For another great Alexa game, check out Song Quiz!`
 }
 
 const LaunchRequestHandler = {
@@ -106,7 +107,7 @@ const HelpIntentHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.HelpIntent';
     },
     handle(handlerInput) {
-        const speakOutput = handlerInput.t('HELP_MSG');
+        const speakOutput = messages.HELP;
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
@@ -122,7 +123,7 @@ const CancelAndStopIntentHandler = {
                 || Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.StopIntent');
     },
     handle(handlerInput) {
-        const speakOutput = handlerInput.t('GOODBYE_MSG');
+        const speakOutput = messages.STOP;
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
@@ -196,17 +197,7 @@ const ErrorHandler = {
     }
 };
 
-// This request interceptor will bind a translation function 't' to the handlerInput
-const LocalisationRequestInterceptor = {
-    process(handlerInput) {
-        i18n.init({
-            lng: Alexa.getLocale(handlerInput.requestEnvelope),
-            resources: languageStrings
-        }).then((t) => {
-            handlerInput.t = (...args) => t(...args);
-        });
-    }
-};
+
 /**
  * This handler acts as the entry point for your skill, routing all request and response
  * payloads to the handlers above. Make sure any new handlers or interceptors you've
@@ -224,6 +215,4 @@ exports.handler = Alexa.SkillBuilders.custom()
         IntentReflectorHandler)
     .addErrorHandlers(
         ErrorHandler)
-    .addRequestInterceptors(
-        LocalisationRequestInterceptor)
     .lambda();
