@@ -1,13 +1,23 @@
 
 const Alexa = require('ask-sdk-core');
 
+const messages = {
+    LAUNCH: `Welcome to Fizz Buzz. We’ll each take turns counting up from one. However, you must replace numbers divisible by 3 with the word “fizz”,and you must replace numbers divisible by 5 with the word “buzz”. If a number is divisible by both 3 and 5, you should instead say “fizz buzz”. If you get one wrong, you lose. I'll go first... 1.`
+     
+}
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
     handle(handlerInput) {
-        const speakOutput = handlerInput.t('WELCOME_MSG');
+
+        //initialize game attributes
+        const {attributesManager} = handlerInput;
+        const attributes = attributesManager.getSessionAttributes();
+        attributes.lastOuput = 1;
+
+        const speakOutput = messages.LAUNCH;
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
@@ -28,6 +38,65 @@ const HelloWorldIntentHandler = {
             .speak(speakOutput)
             //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
             .getResponse();
+    }
+};
+
+function toFizzBuzz (value) {
+    let num = parseInt(value,10);
+    if (num % 15 === 0)
+        return "fizz buzz";
+    if (num % 5 === 0)
+        return "buzz";
+    if (num % 3 === 0)
+        return "fizz";
+    else 
+        return value;
+}
+
+const GameHandler = {
+    canHandle(handlerInput) {
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'GameIntent';
+    },
+    async handle(handlerInput) { 
+        var speakOutput = "";
+        const attributes = handlerInput.attributesManager.getSessionAttributes();
+
+        //Parse user input 
+
+        //first check if it's a number
+        var userInput = Alexa.getSlotValue(handlerInput.requestEnvelope,'number');
+
+        //check it's a fizz/buzz
+        if (userInput == null) {
+            userInput = Alexa.getSlotValue(handlerInput.requestEnvelope,'fizz_or_buzz');
+        }
+
+        //if not fizz or buzz then incorrect answer
+
+        var correctAnswer = toFizzBuzz(attributes.lastOuput + 1);
+
+        //make userinput lowercase to compare with correct Answer
+        if (userInput.toLowerCase === correctAnswer){
+            //if user says the correct answer the output the correct answer and update it for the next cycle
+            let nextOutput = parseInt(attributes.lastOutput += 2, 10);
+            speakOutput = toFizzBuzz(nextOutput);
+
+            return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakOutput)
+            .getResponse();
+
+        }
+        //else gameover
+
+        speakOutput = `Oops, the correct answer was ` + correctAnswer +`. You lose! Thanks for playing Fizz Buzz. For another great Alexa game, check out Song Quiz!`
+
+        return handlerInput.responseBuilder
+        .speak(speakOutput)
+        .withSimpleCard("You Lose!", speakOutput)
+        .getResponse();
+        
     }
 };
 
@@ -147,6 +216,7 @@ exports.handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
         LaunchRequestHandler,
         HelloWorldIntentHandler,
+        GameHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         FallbackIntentHandler,
