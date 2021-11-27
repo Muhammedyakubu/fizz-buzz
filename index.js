@@ -27,17 +27,26 @@ const LaunchRequestHandler = {
     }
 };
 
-const HelloWorldIntentHandler = {
+const RepeatIntentHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
-            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'HelloWorldIntent';
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.RepeatIntent';
     },
     handle(handlerInput) {
-        const speakOutput = handlerInput.t('HELLO_MSG');
+        //access session attributes 
+        const lastNum = attributesManager.getSessionAttributes().lastOutput;
+        
+        //Output both alexa's output and user's previous input. This is in case lastSpeakOut is of type fizz_or_buzz.
+        //This way, the user can determine what the next correct input is
+
+        const speakOutput = `I just said ${toFizzBuzz(lastNum)}. Before that you said ${toFizzBuzz(lastNum - 1)}. It's your turn.`;
+ 
+        const cardOuput = `You last said ${toFizzBuzz(lastNum - 1)}`;
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
+            .withSimpleCard(cardOuput)
+            .reprompt()
             .getResponse();
     }
 };
@@ -206,7 +215,7 @@ const ErrorHandler = {
 exports.handler = Alexa.SkillBuilders.custom()
     .addRequestHandlers(
         LaunchRequestHandler,
-        HelloWorldIntentHandler,
+        RepeatIntentHandler,
         GameHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
