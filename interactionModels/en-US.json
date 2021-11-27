@@ -1,0 +1,81 @@
+{
+    "interactionModel": {
+        "languageModel": {
+            "invocationName": "fizz buzz",
+            "intents": [
+                {
+                    "name": "AMAZON.CancelIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.HelpIntent",
+                    "samples": [
+                        "help",
+                        "what can I say"
+                    ]
+                },
+                {
+                    "name": "AMAZON.StopIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.NavigateHomeIntent",
+                    "samples": []
+                },
+                {
+                    "name": "AMAZON.FallbackIntent",
+                    "samples": []
+                },
+                {
+                    "name": "Game",
+                    "slots": [
+                        {
+                            "name": "number",
+                            "type": "AMAZON.NUMBER"
+                        },
+                        {
+                            "name": "fizz_or_buzz",
+                            "type": "fizz_or_buzz"
+                        }
+                    ],
+                    "samples": [
+                        "{number}",
+                        "{fizz_or_buzz}"
+                    ]
+                },
+                {
+                    "name": "AMAZON.RepeatIntent",
+                    "samples": [
+                        "come again",
+                        "I didn't catch that",
+                        "repeat",
+                        "what did you say",
+                        "what"
+                    ]
+                }
+            ],
+            "types": [
+                {
+                    "name": "fizz_or_buzz",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "fizz buzz"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "buzz"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "fizz"
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}
