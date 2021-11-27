@@ -1,0 +1,23 @@
+{
+  "name": "fizz-buzz",
+  "version": "1.0.0",
+  "description": "a voice-controlled version of fizz buzz",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Muhammedyakubu/fizz-buzz.git"
+  },
+  "author": "Muhammed Yakubu <m.yakubu@mail.utoronto.ca>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Muhammedyakubu/fizz-buzz/issues"
+  },
+  "homepage": "https://github.com/Muhammedyakubu/fizz-buzz#readme",
+  "dependencies": {
+    "ask-sdk-core": "^2.11.0",
+    "ask-sdk-model": "^1.37.1"
+  }
+}
