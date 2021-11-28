@@ -3,7 +3,7 @@ const Alexa = require('ask-sdk-core');
 
 const messages = {
     LAUNCH: `Welcome to Fizz Buzz. We’ll each take turns counting up from one. However, you must replace numbers divisible by 3 with the word “fizz”,and you must replace numbers divisible by 5 with the word “buzz”. If a number is divisible by both 3 and 5, you should instead say “fizz buzz”. If you get one wrong, you lose. I'll go first... 1.`,
-    HELP: `This is Fizz Buzz. We'll take turns counting up from 1. Replace numbers divisible by 3 with the word “fizz”, and you must replace numbers divisible by 5 with the word “buzz”. You can say help, repeat, or exit.`,
+    HELP: `This is Fizz Buzz. We'll take turns counting up from 1. Replace numbers divisible by 3 with the word “fizz”, and replace numbers divisible by 5 with the word “buzz”. You can say help, repeat, or exit.`,
     STOP: `Thanks for playing Fizz Buzz. For another great Alexa game, check out Song Quiz!`,
     ERROR: "I'm sorry, there was an error. Please try again."
 }
@@ -12,12 +12,12 @@ const LaunchRequestHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
 
         //initialize game attributes
         const {attributesManager} = handlerInput;
         const attributes = attributesManager.getSessionAttributes();
-        attributes.lastOuput = 1;
+        attributes.lastOutput = 1;
 
         const speakOutput = messages.LAUNCH;
 
@@ -35,42 +35,44 @@ const RepeatIntentHandler = {
     },
     handle(handlerInput) {
         //access session attributes 
-        const lastNum = attributesManager.getSessionAttributes().lastOutput;
+        const lastNum = handlerInput.attributesManager.getSessionAttributes().lastOutput;
         
         //Output both alexa's output and user's previous input. This is in case lastSpeakOut is of type fizz_or_buzz.
         //This way, the user can determine what the next correct input is
 
+        //I also chose to repeat the last game output over the last thing Alexa said because this was I can give Alexa more personality
+
         const speakOutput = `I just said ${toFizzBuzz(lastNum)}. Before that you said ${toFizzBuzz(lastNum - 1)}. It's your turn.`;
  
-        const cardOuput = `You last said ${toFizzBuzz(lastNum - 1)}`;
+        const cardOutput = `You last said ${toFizzBuzz(lastNum - 1)}`;
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            .withSimpleCard(cardOuput)
+            .withSimpleCard(cardOutput)
             .reprompt()
             .getResponse();
     }
 };
 
 function toFizzBuzz (value) {
-    let num = parseInt(value,10);
+    let num = parseInt(value, 10);
     if (num % 15 === 0)
         return "fizz buzz";
-    if (num % 5 === 0)
+    else if (num % 5 === 0)
         return "buzz";
-    if (num % 3 === 0)
+    else if (num % 3 === 0)
         return "fizz";
     else 
-        return value;
+        return String(value);
 }
 
 const GameHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
-            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'GameIntent';
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'Game';
     },
     async handle(handlerInput) { 
-        var speakOutput = "";
+        var speakOutput = '';
         const attributes = handlerInput.attributesManager.getSessionAttributes();
 
         //Parse user input 
@@ -85,10 +87,10 @@ const GameHandler = {
 
         //if not fizz or buzz then incorrect answer
 
-        var correctAnswer = toFizzBuzz(attributes.lastOuput + 1);
+        var correctAnswer = toFizzBuzz(attributes.lastOutput + 1);
 
         //make userinput lowercase to compare with correct Answer
-        if (userInput.toLowerCase === correctAnswer){
+        if (userInput.toLowerCase() == correctAnswer){
             //if user says the correct answer the output the correct answer and update it for the next cycle
             let nextOutput = parseInt(attributes.lastOutput += 2, 10);
             speakOutput = toFizzBuzz(nextOutput);
@@ -99,15 +101,15 @@ const GameHandler = {
             .getResponse();
 
         }
+        else {
         //else gameover
-
-        speakOutput = `Oops, the correct answer was ` + correctAnswer +`. You lose! Thanks for playing Fizz Buzz. For another great Alexa game, check out Song Quiz!`
+        speakOutput = `Oops, the correct answer was ` + correctAnswer +`. You lose! Thanks for playing Fizz Buzz. For another great Alexa game check out Song Quiz!`;
 
         return handlerInput.responseBuilder
         .speak(speakOutput)
         .withSimpleCard("You Lose!", speakOutput)
         .getResponse();
-        
+        }
     }
 };
 
